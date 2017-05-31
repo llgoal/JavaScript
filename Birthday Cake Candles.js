@@ -24,5 +24,16 @@ function main() {
     var n = parseInt(readLine());
     height = readLine().split(' ');
     height = height.map(Number);
+    
+    tallest = Math.max(...height);
+    var result = 0;
+    
+    height.forEach(function(item){
+        if(item==tallest)
+            {
+                result++;
+            }
+    });
 
+    console.log(result);
 }
