@@ -23,4 +23,20 @@ function readLine() {
 function main() {
     var n = parseInt(readLine());
 
+    
+    for(var i=1;i<=n;i++)
+        {
+            var ladder = "";
+            for(var space=1;space<=n-i;space++)
+                {
+                    ladder += " ";
+                }
+            for(var hash=1;hash<=i;hash++)
+                {
+                    ladder += "#";
+                }
+            console.log(ladder);
+        }
+    
+
 }
