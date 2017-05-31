@@ -1,3 +1,3 @@
 # JavaScript
 
-Random Javascript codes
+Random Javascript challenges from hackerrank.com
