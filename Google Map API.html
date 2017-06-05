@@ -1,98 +1,86 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Distance Matrix service</title>
+<head>
+  <title>Distance Matrix service</title>
+</head>
 
-  </head>
-  <body>
+<script type="text/javascript">
+//process input postal code following the format "X1X 1X1"
+function calc() {
+	var dist = 0;
+	var destination = document.getElementById('txtDestination').value;
 
+	if(destination.length==6){
+	destination = destination.substring(0,3) + " " + destination.substring(3,6);
+	}
+
+	initMap(destination);
+
+}
+
+function initMap(dest) {
+	var distance = 0;
+	var bounds = new google.maps.LatLngBounds;
+	var markersArray = [];
+
+	var origin1 = 'A1B 2C3';
+	var destinationA = dest;
+
+
+	var geocoder = new google.maps.Geocoder;
+
+	var service = new google.maps.DistanceMatrixService;
+	service.getDistanceMatrix({
+	  origins: [origin1],
+	  destinations: [destinationA],
+	  travelMode: 'DRIVING',
+	  unitSystem: google.maps.UnitSystem.METRIC,
+	  avoidHighways: false,
+	  avoidTolls: true
+	  }, function(response, status) {
+	  if (status !== 'OK') {
+		alert('Error was: ' + status);
+	  } else {
+		var originList = response.originAddresses;
+		var destinationList = response.destinationAddresses;
+		var outputDiv = document.getElementById('output');
+		outputDiv.innerHTML = '';
+		deleteMarkers(markersArray);
+
+		var showGeocodedAddressOnMap = function(asDestination) {};
+
+		for (var i = 0; i < originList.length; i++) {
+		  var results = response.rows[i].elements;
+		  geocoder.geocode({'address': originList[i]},
+			  showGeocodedAddressOnMap(false));
+		  for (var j = 0; j < results.length; j++) {
+				geocoder.geocode({'address': destinationList[j]},
+				showGeocodedAddressOnMap(true));
+
+				distance = results[j].distance.text.substring(0,results[j].distance.text.length-2);
+				document.getElementById('lblDist').innerHTML = "Distance(no toll): "+distance+"KM";
+		  }
+		}
+	  }
+	});
+}
+
+function deleteMarkers(markersArray) {
+	for (var i = 0; i < markersArray.length; i++) {
+		markersArray[i].setMap(null);
+	}
+	markersArray = [];
+}
+</script>
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=YOURGOOGLEAPIKEY&callback=initMap">
+</script>
+
+<body>
 <input type="text" id="txtDestination" size="15" value="Postal Code..."> 
 <input type="button" id="btnCalc" value="Delivery Estimate" onclick="calc();"><br>
 <label id="lblEst"></label><br>
 <label id="lblDist"></label>
-
-<script type="text/javascript">
-function calc() {
-var dist = 0;
-var destination = document.getElementById('txtDestination').value;
-
-if(destination.length==6){
-destination = destination.substring(0,3) + " " + destination.substring(3,6);
-}
-
-initMap(destination);
-
-
-
-
-
-
-}
-</script>
-
-
-
-
-    <div id="output"></div>
-
-    <script>
-      function initMap(dest) {
-        var distance = 0;
-        var bounds = new google.maps.LatLngBounds;
-        var markersArray = [];
-
-        var origin1 = 'A1B 2C3';
-        var destinationA = dest;
-
-
-        var geocoder = new google.maps.Geocoder;
-
-        var service = new google.maps.DistanceMatrixService;
-        service.getDistanceMatrix({
-          origins: [origin1],
-          destinations: [destinationA],
-          travelMode: 'DRIVING',
-          unitSystem: google.maps.UnitSystem.METRIC,
-          avoidHighways: false,
-          avoidTolls: true
-        }, function(response, status) {
-          if (status !== 'OK') {
-            alert('Error was: ' + status);
-          } else {
-            var originList = response.originAddresses;
-            var destinationList = response.destinationAddresses;
-            var outputDiv = document.getElementById('output');
-            outputDiv.innerHTML = '';
-            deleteMarkers(markersArray);
-
-            var showGeocodedAddressOnMap = function(asDestination) {};
-
-            for (var i = 0; i < originList.length; i++) {
-              var results = response.rows[i].elements;
-              geocoder.geocode({'address': originList[i]},
-                  showGeocodedAddressOnMap(false));
-              for (var j = 0; j < results.length; j++) {
-                geocoder.geocode({'address': destinationList[j]},
-                    showGeocodedAddressOnMap(true));
-
-distance = results[j].distance.text.substring(0,results[j].distance.text.length-2);
-document.getElementById('lblDist').innerHTML = "Distance(no toll): "+distance+"KM";
-              }
-            }
-          }
-        });
-      }
-
-      function deleteMarkers(markersArray) {
-        for (var i = 0; i < markersArray.length; i++) {
-          markersArray[i].setMap(null);
-        }
-        markersArray = [];
-      }
-    </script>
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=YOURGOOGLEAPIKEY&callback=initMap">
-    </script>
-
-  </body>
+<div id="output"></div>
+</body>
 </html>
